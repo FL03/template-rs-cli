@@ -2,46 +2,79 @@
     Appellation: cli <module>
     Contrib: FL03 <jo3mccain@icloud.com>
 */
-pub use self::opts::Options;
+pub use self::{args::Cmd, interface::Cli};
 
-pub(crate) mod opts;
+mod interface;
 
 pub mod args;
 
-use clap::Parser;
-use serde::{Deserialize, Serialize};
-
-pub fn new() -> Cli {
-    Cli::parse()
+pub struct App {
+    interface: Cli,
 }
 
-#[derive(Clone, Debug, Deserialize, Eq, Hash, Ord, Parser, PartialEq, PartialOrd, Serialize)]
-#[clap(about, author, long_about = None, version)]
-#[command(arg_required_else_help(true), allow_missing_positional(true))]
-pub struct Cli {
-    #[clap(subcommand)]
-    pub command: Option<Options>,
-    #[arg(action = clap::ArgAction::SetTrue, long, short)]
-    pub verbose: bool,
-}
-
-impl Cli {
+impl App {
     pub fn new() -> Self {
-        Cli::parse()
+        Self {
+            interface: Cli::new(),
+        }
     }
-}
 
-impl core::fmt::Display for Cli {
-    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        f.write_str(serde_json::to_string(self).unwrap().as_str())
+    pub fn command(&self) -> Option<&Cmd> {
+        self.interface.command()
     }
-}
 
-impl Default for Cli {
-    fn default() -> Self {
-        Cli {
-            command: None,
-            verbose: false,
+    pub fn update(&self) -> bool {
+        self.interface.update()
+    }
+
+    pub fn verbose(&self) -> bool {
+        self.interface.verbose()
+    }
+
+    pub fn handle_update(&self) {
+        if self.update() {
+            println!("Updating the project...");
+        }
+    }
+
+    pub fn handle_verbose(&self) {
+        if self.verbose() {
+            tracing::debug!("Verbose mode enabled...");
+        }
+    }
+
+    pub fn handle_command(&self, cmd: &Cmd) {
+        match cmd {
+            Cmd::Build => {
+                println!("Building the project...");
+            }
+            Cmd::Platform(platform) => match &platform.args {
+                Some(args) => match args {
+                    args::PlatformOpts::Connect { target } => {
+                        println!("Connecting to target: {:?}", target);
+                    }
+                },
+                None => {
+                    println!("No arguments provided for the platform command...");
+                }
+            },
+            Cmd::System(system) => {
+                if let Some(args) = &system.args {
+                    match args {
+                        args::SystemOpts::Config { path } => {
+                            println!("Configuring the system with path: {:?}", path);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    pub fn handle(&self) {
+        self.handle_update();
+        self.handle_verbose();
+        if let Some(cmd) = self.command() {
+            self.handle_command(cmd);
         }
     }
 }

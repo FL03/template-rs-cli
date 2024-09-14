@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 #[derive(
     Clone, Debug, Deserialize, Eq, Hash, Ord, PartialEq, PartialOrd, Serialize, clap::Parser,
 )]
-pub struct PlatformCommand {
+pub struct PlatformCmd {
     #[clap(subcommand)]
     pub args: Option<PlatformOpts>,
 }
@@ -24,7 +24,6 @@ pub struct PlatformCommand {
     serde::Deserialize,
     serde::Serialize,
     strum::AsRefStr,
-    strum::Display,
     strum::EnumCount,
     strum::VariantNames,
 )]
@@ -47,7 +46,11 @@ impl PlatformOpts {
     }
 }
 
-impl_display_json!(PlatformCommand);
+impl core::fmt::Display for PlatformOpts {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+        f.write_str(serde_json::to_string(self).unwrap().as_str())
+    }
+}
 
 #[cfg(test)]
 mod tests {

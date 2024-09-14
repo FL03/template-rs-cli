@@ -40,7 +40,7 @@ pub struct SystemCommand {
 pub enum SystemOpts {
     #[default]
     Config {
-        #[clap(long, short, default_value_t = String::from("Proton.toml"))]
+        #[clap(long, short, default_value_t = String::from(".config/default.config.toml"))]
         path: String,
     },
 }

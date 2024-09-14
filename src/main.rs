@@ -13,7 +13,7 @@ pub mod cnf;
 
 fn main() {
     init_tracing("debug");
-    let _cli = cmd::new();
+    let _cli = dbg!(cmd::Cli::new());
 }
 
 fn init_tracing(level: impl ToString) {

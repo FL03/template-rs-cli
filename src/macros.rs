@@ -2,6 +2,7 @@
     Appellation: macros <module>
     Contrib: FL03 <jo3mccain@icloud.com>
 */
+#![allow(unused)]
 
 macro_rules! impl_display_json {
     (@debug $name:ident) => {
