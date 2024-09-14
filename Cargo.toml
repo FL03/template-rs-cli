@@ -1,0 +1,71 @@
+[package]
+authors = ["FL03 <jo3mccain@icloud.com>"]
+categories = [ ]
+description = "A template command line application written in Rust leveraging the clap framework"
+edition = "2021"
+homepage = "https://github.com/FL03/template-rs-cli/wiki"
+keywords = [ "binary", "cli" ]
+license = "Apache-2.0"
+name = "template-rs-cli"
+readme = "README.md"
+repository = "https://github.com/FL03/template-rs-cli.git"
+version = "0.0.0"
+
+[[bin]]
+name = "sampler"
+path = "src/main.rs"
+
+# ********* Dependencies *********
+[dependencies]
+serde_json = "1"
+smart-default = "0.7"
+
+[dependencies.clap]
+features = ["derive", "env"]
+version = "4"
+
+[dependencies.serde]
+features = ["derive"]
+version = "1"
+
+[dependencies.strum]
+features = ["derive"]
+version = "0.26"
+
+[dependencies.tracing]
+features = ["log"]
+version = "0.1"
+
+[dependencies.tracing-subscriber]
+features = ["env-filter"]
+version = "0.3"
+
+# ********* Dev Dependencies *********
+[dev-dependencies]
+lazy_static = "1"
+
+[package.metadata.docs.rs]
+all-features = true
+rustc-args = ["--cfg", "docsrs"]
+
+[profile.dev]
+opt-level = 0
+debug = true
+debug-assertions = true
+overflow-checks = true
+lto = false
+panic = 'unwind'
+incremental = true
+codegen-units = 256
+rpath = false
+
+[profile.release]
+opt-level = 3
+debug = false
+debug-assertions = false
+overflow-checks = false
+lto = false
+panic = 'unwind'
+incremental = false
+codegen-units = 16
+rpath = false
